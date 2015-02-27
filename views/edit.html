@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Editor</title>
-  <style type="text/css" media="screen">
-    #editor {
-        width: 100%;
-        height: 600px;
-    }
-  </style>
-  <link rel='stylesheet' href='/public/stylesheets/simplegrid.css'>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Editor</title>
+	<style type="text/css" media="screen">
+		#editor {
+				width: 100%;
+				height: 600px;
+		}
+	</style>
+	<link rel='stylesheet' href='/public/stylesheets/simplegrid.css'>
 </head>
 <body>
 
 <div class='grid'>
-  <div class='col-2-12'>
-    <input onclick="load();" style="width: 100%" type="submit" value="Load">
-  </div>
-  <div class='col-8-12'>
-    <input style="width: 100%" value="<%= name %>" id='name'>
-  </div>
-  <div class='col-2-12'>
-    <input onclick="save();" style="width: 100%" type="submit" value="Save">
-  </div>
-  <div class='col-1-1'>
-    <pre id="editor"><%- data %></pre>
-  </div>
+	<div class='col-2-12'>
+		<input onclick="load();" style="width: 100%" type="submit" value="Load">
+	</div>
+	<div class='col-8-12'>
+		<input style="width: 100%" value="<%= name %>" id='name'>
+	</div>
+	<div class='col-2-12'>
+		<input onclick="save();" style="width: 100%" type="submit" value="Save">
+	</div>
+	<div class='col-1-1'>
+		<pre id="editor"><%- data %></pre>
+	</div>
 </div>
 
 <script src="/public/javascripts/jquery-1.10.2.min.js" type="text/javascript" charset="utf-8"></script>
@@ -39,59 +39,59 @@
 <script>
 var editor;
 $(function () {
-  editor = ace.edit("editor");
-  editor.$blockScrolling = Infinity;
-  editor.setTheme("ace/theme/github");
-  editor.getSession().setMode(getModeForFilename("<%= name %>"));
+	editor = ace.edit("editor");
+	editor.$blockScrolling = Infinity;
+	editor.setTheme("ace/theme/github");
+	editor.getSession().setMode(getModeForFilename("<%= name %>"));
 });
 
 if (typeof String.prototype.endsWith !== 'function') {
-  String.prototype.endsWith = function(suffix) {
-      return this.indexOf(suffix, this.length - suffix.length) !== -1;
-  };
+	String.prototype.endsWith = function(suffix) {
+			return this.indexOf(suffix, this.length - suffix.length) !== -1;
+	};
 }
 
 function getModeForFilename(name) {
-  if(name.endsWith('.js')) {
-    return 'ace/mode/javascript';
-  }
-  else if (name.endsWith('.html')) {
-    return 'ace/mode/html';
-  }
-  else if (name.endsWith('.css')) {
-    return 'ace/mode/css';
-  }
-  return 'ace/mode/text';
+	if(name.endsWith('.js')) {
+		return 'ace/mode/javascript';
+	}
+	else if (name.endsWith('.html')) {
+		return 'ace/mode/html';
+	}
+	else if (name.endsWith('.css')) {
+		return 'ace/mode/css';
+	}
+	return 'ace/mode/text';
 }
 
 function getFilename() {
-  return $('#name')[0].value;
+	return $('#name')[0].value;
 }
 
 function save() {
-  $.post('/file/put', {
-    name: getFilename(),
-    data: editor.getValue()
-  })
-  .done(function(data) {
-    //alert('Saved: ' + data.name);
-    window.location = 'http://localhost:8080/edit?name='+data.name;
-  })
-  .fail(function (jqXHR, textStatus, errorThrown) {
-    alert( "error: " + errorThrown);
-  });
+	$.post('/file/put', {
+		name: getFilename(),
+		data: editor.getValue()
+	})
+	.done(function(data) {
+		//alert('Saved: ' + data.name);
+		window.location = 'http://localhost:8080/edit?name='+data.name;
+	})
+	.fail(function (jqXHR, textStatus, errorThrown) {
+		alert( "error: " + errorThrown);
+	});
 }
 
 function load() {
-  var name = getFilename();
-  $.get('/file/get?name=' + name)
-  .done(function(data, textStatus, jqXHR) {
-    editor.setValue(data.data, -1);
-    editor.getSession().setMode(getModeForFilename(name));
-  })
-  .fail(function(jqXHR, textStatus, errorThrown) {
-    alert( "error: " + errorThrown);
-  });
+	var name = getFilename();
+	$.get('/file/get?name=' + name)
+	.done(function(data, textStatus, jqXHR) {
+		editor.setValue(data.data, -1);
+		editor.getSession().setMode(getModeForFilename(name));
+	})
+	.fail(function(jqXHR, textStatus, errorThrown) {
+		alert( "error: " + errorThrown);
+	});
 }
 </script>
 
