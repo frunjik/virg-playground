@@ -19,14 +19,10 @@ virgilio.defineAction$(function getFile(name) {
 	return fs.readFileAsync(name, {encoding: 'utf8'});
 });
 
-virgilio.http._server$.get(/public/, restify.serveStatic({
-	directory: __dirname
-}));
-
-function edit(virgGetFile, res, name) {
-	return virgGetFile.execute$(name)
+virgilio.defineAction$(function edit(res, name) {
+	return virgilio.getFile(name)
 		.then(function (html) {
-			return virgGetFile.execute$('./views/edit.html')
+			return virgilio.getFile('./views/edit.html')
 				.then(function (tmpl) {
 					return _.template(tmpl)({"data": html, "name": name});
 				});
@@ -39,16 +35,20 @@ function edit(virgGetFile, res, name) {
 			res.write(html);
 			res.end();
 		});
-}
+});
 
-virgilio.getFile.get('/')
+virgilio.http._server$.get(/public/, restify.serveStatic({
+	directory: __dirname
+}));
+
+virgilio.edit.get('/')
 	.transform(function(req, res) {
-		return edit(this, res, './index.js');
+		return this.execute$(res, './index.js');
 	});
 
-virgilio.getFile.get('/edit')
+virgilio.edit.get('/edit')
 	.transform(function(req, res) {
-		return edit(this, res, req.params.name);
+		return this.execute$(res, req.params.name);
 	});
 
 virgilio.getFile.get('/file/get')
