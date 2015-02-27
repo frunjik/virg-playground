@@ -20,9 +20,9 @@ virgilio.defineAction$(function getFile(name) {
 });
 
 virgilio.defineAction$(function edit(res, name) {
-	return virgilio.getFile(name)
+	return fs.readFileAsync(name)
 		.then(function (html) {
-			return virgilio.getFile('./views/edit.html')
+			return fs.readFileAsync('./views/edit.html')
 				.then(function (tmpl) {
 					return _.template(tmpl)({"data": html, "name": name});
 				});
